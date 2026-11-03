@@ -2,16 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Actions\Teams\CreateTeam;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class AdminUserSeeder extends Seeder
 {
-    /**
-     * Cria o administrador inicial somente quando as credenciais forem
-     * fornecidas nas variáveis de ambiente do serviço.
-     */
     public function run(): void
     {
         $email = Str::lower(trim((string) env('ADMIN_EMAIL')));
@@ -30,5 +27,13 @@ class AdminUserSeeder extends Seeder
 
         $user->is_admin = true;
         $user->save();
+
+        if (! $user->personalTeam()) {
+            app(CreateTeam::class)->handle(
+                $user,
+                $user->name . "'s Team",
+                isPersonal: true
+            );
+        }
     }
 }
