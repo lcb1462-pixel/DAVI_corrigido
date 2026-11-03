@@ -2,12 +2,12 @@
 # Aplicação Laravel + Apache com compilação do frontend no mesmo ambiente PHP.
 FROM php:8.3-apache AS app
 
-# Dependências do sistema e extensões PHP necessárias ao Laravel.
+# Dependências do sistema e extensões PHP.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git unzip libzip-dev libpng-dev libonig-dev libxml2-dev \
     libsqlite3-dev pkg-config \
     && docker-php-ext-install -j"$(nproc)" \
-       pdo_mysql pdo_sqlite sqlite3 mbstring zip exif pcntl bcmath gd \
+       pdo_mysql mbstring zip exif pcntl bcmath gd \
     && a2enmod rewrite \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -31,7 +31,6 @@ WORKDIR /var/www/html
 COPY . .
 
 # Instala dependências PHP e JavaScript e compila o frontend.
-# O PHP já está disponível para o Laravel Wayfinder.
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader \
     && npm ci \
     && npm run build \
