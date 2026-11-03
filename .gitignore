@@ -1,0 +1,41 @@
+
+/vendor/
+/node_modules/
+/public/build
+/public/hot
+
+# Arquivos de ambiente e segredos
+.env
+.env.*
+!.env.example
+auth.json
+
+# Banco de dados local
+/database/*.sqlite
+/database/*.sqlite-*
+
+# Arquivos temporários do Laravel
+/storage/logs/*
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*.php
+/storage/framework/testing/*
+/storage/inertia-devtools/*
+
+# Arquivos enviados localmente
+/storage/app/private/*
+/storage/app/public/*
+
+# Chaves e arquivos sensíveis
+/storage/*.key
+
+# Arquivos de desenvolvimento
+npm-debug.log
+yarn-error.log
+.phpunit.result.cache
+.phpactor.json
+
+# Outros arquivos
+Homestead.yaml
+Homestead.json
+/.vagrant
