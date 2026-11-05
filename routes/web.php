@@ -14,6 +14,16 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
+Route::get('/teste-sessao', function (\Illuminate\Http\Request $request) {
+    $request->session()->put('teste_davi', 'sessao funcionando');
+
+    return response()->json([
+        'session_id' => $request->session()->getId(),
+        'session_driver' => config('session.driver'),
+        'session_cookie' => config('session.cookie'),
+        'session_value' => $request->session()->get('teste_davi'),
+    ]);
+});
 
 /*
 |--------------------------------------------------------------------------
