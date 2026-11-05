@@ -19,6 +19,7 @@ Route::get('/teste-sessao', function (\Illuminate\Http\Request $request) {
 
     return response()->json([
         'session_id' => $request->session()->getId(),
+        'session_started' => $request->session()->isStarted(),
         'session_driver' => config('session.driver'),
         'session_cookie' => config('session.cookie'),
         'session_value' => $request->session()->get('teste_davi'),
