@@ -14,16 +14,17 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
+
+// Rota temporária para testar os cookies e a sessão no Render.
 Route::get('/teste-sessao', function (\Illuminate\Http\Request $request) {
     $request->session()->put('teste_davi', 'sessao funcionando');
 
     return response()->json([
-        'session_id' => $request->session()->getId(),
         'session_started' => $request->session()->isStarted(),
         'session_driver' => config('session.driver'),
         'session_cookie' => config('session.cookie'),
         'session_value' => $request->session()->get('teste_davi'),
-    ]);
+    ])->cookie('teste-cookie-davi', 'funcionando', 120);
 });
 
 /*
@@ -67,13 +68,16 @@ Route::prefix('{current_team}')
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+
     // Compatibilidade com links antigos que ainda apontam para /dashboard.
     Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         $team = $request->user()->currentTeam ?? $request->user()->personalTeam();
 
         abort_unless($team, 403, 'Nenhuma equipe foi encontrada para este usuário.');
 
-        return redirect()->route('dashboard', ['current_team' => $team->slug]);
+        return redirect()->route('dashboard', [
+            'current_team' => $team->slug,
+        ]);
     })->name('dashboard.redirect');
 
     // Convites de equipe
