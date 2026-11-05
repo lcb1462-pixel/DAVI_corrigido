@@ -15,16 +15,41 @@ use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
 
-// Rota temporária para testar os cookies e a sessão no Render.
+/*
+|--------------------------------------------------------------------------
+| Teste de sessão e envio de cookies
+|--------------------------------------------------------------------------
+*/
 Route::get('/teste-sessao', function (\Illuminate\Http\Request $request) {
     $request->session()->put('teste_davi', 'sessao funcionando');
 
-    return response()->json([
+    $response = response()->json([
         'session_started' => $request->session()->isStarted(),
         'session_driver' => config('session.driver'),
         'session_cookie' => config('session.cookie'),
         'session_value' => $request->session()->get('teste_davi'),
-    ])->cookie('teste-cookie-davi', 'funcionando', 120);
+    ]);
+
+    $response->headers->set(
+        'X-DAVI-Teste',
+        'resposta-gerada-pelo-laravel'
+    );
+
+    $response->headers->setCookie(
+        new \Symfony\Component\HttpFoundation\Cookie(
+            'teste-cookie-davi',
+            'funcionando',
+            time() + 7200,
+            '/',
+            null,
+            true,
+            true,
+            false,
+            'lax'
+        )
+    );
+
+    return $response;
 });
 
 /*
@@ -73,7 +98,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         $team = $request->user()->currentTeam ?? $request->user()->personalTeam();
 
-        abort_unless($team, 403, 'Nenhuma equipe foi encontrada para este usuário.');
+        abort_unless(
+            $team,
+            403,
+            'Nenhuma equipe foi encontrada para este usuário.'
+        );
 
         return redirect()->route('dashboard', [
             'current_team' => $team->slug,
