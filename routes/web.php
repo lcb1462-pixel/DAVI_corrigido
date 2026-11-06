@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\Admin\PainelController;
@@ -14,43 +13,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
-
-/*
-|--------------------------------------------------------------------------
-| Teste de sessão e envio de cookies
-|--------------------------------------------------------------------------
-*/
-Route::get('/teste-sessao', function (\Illuminate\Http\Request $request) {
-    $request->session()->put('teste_davi', 'sessao funcionando');
-
-    $response = response()->json([
-        'session_started' => $request->session()->isStarted(),
-        'session_driver' => config('session.driver'),
-        'session_cookie' => config('session.cookie'),
-        'session_value' => $request->session()->get('teste_davi'),
-    ]);
-
-    $response->headers->set(
-        'X-DAVI-Teste',
-        'resposta-gerada-pelo-laravel'
-    );
-
-    $response->headers->setCookie(
-        new \Symfony\Component\HttpFoundation\Cookie(
-            'teste-cookie-davi',
-            'funcionando',
-            time() + 7200,
-            '/',
-            null,
-            true,
-            true,
-            false,
-            'lax'
-        )
-    );
-
-    return $response;
-});
 
 /*
 |--------------------------------------------------------------------------
