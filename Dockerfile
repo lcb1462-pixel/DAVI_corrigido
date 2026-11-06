@@ -5,9 +5,9 @@ FROM php:8.3-apache AS app
 # Dependências do sistema e extensões PHP
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git unzip libzip-dev libpng-dev libonig-dev libxml2-dev \
-    libsqlite3-dev pkg-config \
+    libsqlite3-dev libpq-dev pkg-config \
     && docker-php-ext-install -j"$(nproc)" \
-       pdo_mysql pdo_sqlite mbstring zip exif pcntl bcmath gd \
+       pdo_mysql pdo_sqlite pdo_pgsql mbstring zip exif pcntl bcmath gd \
     && a2enmod rewrite \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
