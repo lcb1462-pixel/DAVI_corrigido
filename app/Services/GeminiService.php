@@ -51,10 +51,9 @@ class GeminiService
                             ]
                         ],
                         'generationConfig' => [
-                            'temperature' => 0.7,
                             'maxOutputTokens' => 4096,
                             'thinkingConfig' => [
-                                'thinkingBudget' => 512,
+                                'thinkingLevel' => 'low',
                             ],
                         ],
                     ]
