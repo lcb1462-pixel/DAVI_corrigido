@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use GuzzleHttp\TransferStats;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
@@ -22,6 +23,22 @@ class GeminiService
         try {
             $resposta = Http::withOptions([
                 'verify' => storage_path('certificados/cacert.pem'),
+                'on_stats' => function (TransferStats $stats) use ($modelo) {
+                    $dados = $stats->getHandlerStats();
+
+                    logger()->info('Diagnóstico de transporte Gemini.', [
+                        'modelo' => $modelo,
+                        'tempo_total' => $dados['total_time'] ?? $stats->getTransferTime(),
+                        'tempo_dns' => $dados['namelookup_time'] ?? null,
+                        'tempo_conexao' => $dados['connect_time'] ?? null,
+                        'tempo_tls' => $dados['appconnect_time'] ?? null,
+                        'tempo_primeiro_byte' => $dados['starttransfer_time'] ?? null,
+                        'ip_destino' => $dados['primary_ip'] ?? null,
+                        'codigo_http' => $dados['http_code'] ?? null,
+                        'resultado_verificacao_tls' => $dados['ssl_verify_result'] ?? null,
+                        'erro_transporte' => $stats->getHandlerErrorData(),
+                    ]);
+                },
             ])
                 ->withHeaders([
                     'x-goog-api-key' => $chave,
